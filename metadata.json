@@ -1,0 +1,8 @@
+{
+  "name": "Remix Refood POS",
+  "description": "Modern Indonesian culinary Point of Sale \u0026 restaurant management system with multi-role PIN access, real-time analytics, automated payments, WhatsApp \u0026 email notifications, recipes, stock management, and PDF/Excel reports.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
