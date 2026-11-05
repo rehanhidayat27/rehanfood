@@ -41,7 +41,7 @@ export const FinancialReports: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6 custom-scrollbar pb-24 lg:pb-8">
+    <div className="flex-1 overflow-y-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 space-y-6 custom-scrollbar pb-24 lg:pb-8 min-w-0">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -163,7 +163,7 @@ export const FinancialReports: React.FC = () => {
         </h3>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs" aria-label="Rincian Pembukuan">
+          <table className="w-full text-left text-xs min-w-[640px]" aria-label="Rincian Pembukuan">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 font-bold uppercase tracking-wider">
                 <th className="pb-3">Order ID</th>

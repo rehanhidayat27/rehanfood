@@ -169,7 +169,7 @@ export const ProductManagement: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6 custom-scrollbar pb-24 lg:pb-8">
+    <div className="flex-1 overflow-y-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 space-y-4 sm:space-y-6 custom-scrollbar pb-24 lg:pb-8 min-w-0">
       {/* Header and Add button */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -194,7 +194,7 @@ export const ProductManagement: React.FC = () => {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="p-4 bg-white dark:bg-slate-850 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex items-center justify-between gap-4">
+      <div className="p-3 sm:p-4 bg-white dark:bg-slate-850 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 sm:gap-4">
         <div className="relative flex-1 max-w-sm">
           <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
           <input
@@ -205,39 +205,39 @@ export const ProductManagement: React.FC = () => {
             className="w-full pl-9 pr-3 py-1.5 text-xs bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl text-slate-900 dark:text-white"
           />
         </div>
-        <span className="text-xs text-slate-400 font-semibold">
+        <span className="text-xs text-slate-400 font-semibold self-end sm:self-auto">
           {filteredItems.length} {language === 'en' ? 'menu items' : 'menu tercatat'}
         </span>
       </div>
 
       {/* Product List Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
         {filteredItems.map((item) => (
           <div
             key={item.id}
-            className="p-4 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-700 shadow-sm flex gap-4 transition-all hover:border-slate-300 dark:hover:border-slate-600"
+            className="p-3 sm:p-4 rounded-2xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-700 shadow-sm flex gap-3 sm:gap-4 transition-all hover:border-slate-300 dark:hover:border-slate-600 overflow-hidden min-w-0"
           >
             <img
               src={item.image}
               alt={getDishName(item, language)}
-              className="w-20 h-20 rounded-xl object-cover shrink-0"
+              className="w-16 h-16 sm:w-20 sm:h-20 rounded-xl object-cover shrink-0"
             />
 
-            <div className="flex-1 min-w-0 space-y-2">
-              <div className="flex items-start justify-between gap-1">
-                <div>
-                  <span className="text-[10px] font-bold text-orange-600 uppercase">
+            <div className="flex-1 min-w-0 space-y-2 flex flex-col justify-between">
+              <div className="flex items-start justify-between gap-1.5 min-w-0">
+                <div className="flex-1 min-w-0 pr-1">
+                  <span className="text-[10px] font-bold text-orange-600 uppercase block truncate">
                     {getDishCategory(item.category, language)}
                   </span>
-                  <h3 className="text-xs font-bold text-slate-900 dark:text-white truncate">
+                  <h3 className="text-xs sm:text-sm font-bold text-slate-900 dark:text-white line-clamp-2 leading-snug break-words">
                     {getDishName(item, language)}
                   </h3>
                 </div>
 
-                <div className="flex items-center gap-1 shrink-0">
+                <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
                   <button
                     onClick={() => openEditModal(item)}
-                    className="p-1 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-blue-600 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
                     title={language === 'en' ? 'Edit Menu' : 'Edit Menu'}
                   >
                     <Edit2 className="w-3.5 h-3.5" />
@@ -262,39 +262,41 @@ export const ProductManagement: React.FC = () => {
                 </div>
               </div>
 
-              <div className="flex items-center justify-between text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
-                <div>
+              <div className="flex items-center justify-between gap-1 text-xs pt-1 border-t border-slate-100 dark:border-slate-800">
+                <div className="min-w-0 flex-1">
                   <span className="text-[10px] text-slate-400 block">{language === 'en' ? 'Price / Cost' : 'Harga / HPP'}</span>
-                  <span className="font-extrabold text-orange-600">
+                  <span className="font-extrabold text-orange-600 block text-xs sm:text-sm truncate">
                     {formatIDR(item.price)}
                   </span>
-                  <span className="text-[10px] text-slate-400 block font-normal">
+                  <span className="text-[10px] text-slate-400 block font-normal truncate">
                     HPP: {formatIDR(item.costPrice)}
                   </span>
                 </div>
 
                 <button
+                  type="button"
                   onClick={() => setSelectedRecipeItem(item)}
-                  className="px-2 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 text-[10px] font-bold flex items-center gap-1 cursor-pointer"
+                  className="px-2 py-1 rounded-lg bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 text-[10px] font-bold flex items-center gap-1 cursor-pointer shrink-0 whitespace-nowrap"
+                  title={language === 'en' ? 'View Recipe Ratios' : 'Lihat Formula & Takaran Resep'}
                 >
-                  <BookOpen className="w-3 h-3" />
-                  <span>{item.recipe.length} {language === 'en' ? 'Ingredients' : 'Bahan Resep'}</span>
+                  <BookOpen className="w-3 h-3 shrink-0" />
+                  <span>{item.recipe.length} <span className="hidden sm:inline">{language === 'en' ? 'Ingredients' : 'Bahan'}</span></span>
                 </button>
               </div>
 
               <div className="flex items-center justify-between pt-1 text-[11px]">
                 <span className="flex items-center gap-1">
                   {item.available ? (
-                    <span className="text-emerald-600 font-semibold flex items-center gap-0.5">
+                    <span className="text-emerald-600 font-semibold flex items-center gap-0.5 text-[10px] sm:text-xs">
                       <CheckCircle2 className="w-3 h-3" /> {language === 'en' ? 'Available' : 'Tersedia'}
                     </span>
                   ) : (
-                    <span className="text-red-500 font-semibold flex items-center gap-0.5">
+                    <span className="text-red-500 font-semibold flex items-center gap-0.5 text-[10px] sm:text-xs">
                       <XCircle className="w-3 h-3" /> {language === 'en' ? 'Out of Stock' : 'Habis'}
                     </span>
                   )}
                 </span>
-                <span className="text-slate-400">{item.calories} kkal</span>
+                <span className="text-slate-400 text-[10px] sm:text-xs">{item.calories} kkal</span>
               </div>
             </div>
           </div>

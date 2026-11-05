@@ -84,7 +84,7 @@ export const AnalyticsDashboard: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6 custom-scrollbar pb-24 lg:pb-8">
+    <div className="flex-1 overflow-y-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 space-y-6 custom-scrollbar pb-24 lg:pb-8 min-w-0">
       {/* Header & Export Controls */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -251,23 +251,23 @@ export const AnalyticsDashboard: React.FC = () => {
                 const percent = Math.round((qty / maxDishQty) * 100);
 
                 return (
-                  <div key={name} className="space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-200">
-                        <span className="w-4 text-slate-400">#{idx + 1}</span>
+                  <div key={name} className="space-y-1.5 min-w-0">
+                    <div className="flex items-center justify-between gap-2 text-xs min-w-0">
+                      <div className="flex items-center gap-2 font-bold text-slate-800 dark:text-slate-200 min-w-0 flex-1">
+                        <span className="w-4 text-slate-400 shrink-0">#{idx + 1}</span>
                         {menuItem && (
                           <img
                             src={menuItem.image}
                             alt={name}
-                            className="w-6 h-6 rounded-md object-cover"
+                            className="w-6 h-6 rounded-md object-cover shrink-0"
                           />
                         )}
-                        <span className="truncate max-w-[200px] sm:max-w-xs">
+                        <span className="truncate min-w-0">
                           {menuItem ? getDishName(menuItem, language) : name}
                         </span>
                       </div>
-                      <span className="font-mono text-slate-500 font-semibold">
-                        {qty} {language === 'en' ? 'servings sold' : 'porsi terjual'}
+                      <span className="shrink-0 whitespace-nowrap text-right font-mono font-bold text-slate-600 dark:text-slate-300">
+                        {qty} <span className="text-[11px] font-normal text-slate-400">{language === 'en' ? 'sold' : 'porsi'}</span>
                       </span>
                     </div>
 
@@ -337,7 +337,7 @@ export const AnalyticsDashboard: React.FC = () => {
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs" aria-label="Tabel Transaksi Terkini">
+          <table className="w-full text-left text-xs min-w-[640px]" aria-label="Tabel Transaksi Terkini">
             <thead>
               <tr className="border-b border-slate-200 dark:border-slate-700 text-slate-400 font-bold uppercase tracking-wider">
                 <th className="pb-3 pl-2">{t('orderIdCol')}</th>
