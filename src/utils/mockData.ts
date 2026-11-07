@@ -3,11 +3,11 @@ import { MenuItem, RawMaterial, StaffUser, CalendarEvent, OrderTransaction } fro
 export const INITIAL_STAFF: StaffUser[] = [
   {
     id: 'staff-admin',
-    name: 'Budi Santoso',
+    name: 'Rehan Hidayat',
     role: 'admin',
     shift: 'Admin',
     pin: '888888',
-    avatar: 'https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?auto=format&fit=crop&w=150&q=80',
+    avatar: '/assets/aistudio/WhatsApp_Image_2026-11-07_at_19.23.16_6c1e65d5.jpeg',
     email: 'admin@rehanfood.id',
     phone: '+62 811-2233-4455',
   },
@@ -473,7 +473,7 @@ export const INITIAL_CALENDAR_EVENTS: CalendarEvent[] = [
     type: 'restock',
     description: 'Supplier PD Pasar Jaya mengantar 25kg daging sirloin dan 50kg beras Cianjur.',
     englishDescription: 'Supplier PD Pasar Jaya delivering 25kg sirloin beef and 50kg Cianjur rice.',
-    assignee: 'Budi Santoso (Admin)',
+    assignee: 'Rehan Hidayat (Admin)',
   },
   {
     id: 'ev-2',

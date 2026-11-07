@@ -114,4 +114,36 @@ export function formatDeletePrompt(type: 'bahan' | 'menu' | 'jadwal', name: stri
   }
 }
 
+export function canUserEditStaffRole(
+  currentUserRole: 'kasir' | 'manager' | 'admin',
+  targetUserRole: 'kasir' | 'manager' | 'admin'
+): boolean {
+  if (currentUserRole === 'admin') {
+    return true; // Admin can edit all roles
+  }
+  if (currentUserRole === 'manager') {
+    // Manager can edit kasir and manager, but cannot edit admin
+    return targetUserRole !== 'admin';
+  }
+  // Kasir cannot edit anyone
+  return false;
+}
+
+export function validateStaffUpdates(updates: {
+  name?: string;
+  pin?: string;
+  shift?: string;
+}): { isValid: boolean; message?: string } {
+  if (updates.name !== undefined && updates.name.trim().length === 0) {
+    return { isValid: false, message: 'Nama staf tidak boleh kosong.' };
+  }
+  if (updates.pin !== undefined) {
+    const cleanPin = updates.pin.trim();
+    if (!/^\d{6}$/.test(cleanPin)) {
+      return { isValid: false, message: 'Sandi PIN harus terdiri dari tepat 6 angka numerik.' };
+    }
+  }
+  return { isValid: true };
+}
+
 

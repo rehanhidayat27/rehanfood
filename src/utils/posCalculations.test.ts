@@ -7,6 +7,8 @@ import {
   calculateFinancialSummary,
   verifyStaffPin,
   formatDeletePrompt,
+  canUserEditStaffRole,
+  validateStaffUpdates,
 } from './posCalculations.ts';
 
 test('calculateOrderTotals applies subtotal, discount, 2% service fee, and 10% tax correctly', () => {
@@ -109,5 +111,43 @@ test('formatDeletePrompt formats exact deletion confirmation matching user requi
     formatDeletePrompt('jadwal', 'Briefing Operasional Dapur'),
     'Hapus jadwal "Briefing Operasional Dapur"?'
   );
+});
+
+test('canUserEditStaffRole enforces that only Admin and Manager can edit staff, and Kasir cannot edit', () => {
+  // Admin can edit kasir, manager, and admin
+  assert.equal(canUserEditStaffRole('admin', 'kasir'), true);
+  assert.equal(canUserEditStaffRole('admin', 'manager'), true);
+  assert.equal(canUserEditStaffRole('admin', 'admin'), true);
+
+  // Manager can edit kasir and manager, but NOT admin
+  assert.equal(canUserEditStaffRole('manager', 'kasir'), true);
+  assert.equal(canUserEditStaffRole('manager', 'manager'), true);
+  assert.equal(canUserEditStaffRole('manager', 'admin'), false);
+
+  // Kasir CANNOT edit anyone (kasir, manager, admin)
+  assert.equal(canUserEditStaffRole('kasir', 'kasir'), false);
+  assert.equal(canUserEditStaffRole('kasir', 'manager'), false);
+  assert.equal(canUserEditStaffRole('kasir', 'admin'), false);
+});
+
+test('validateStaffUpdates validates name and 6-digit PIN correctly', () => {
+  // Valid updates
+  assert.equal(validateStaffUpdates({ name: 'Fajar Nugraha', pin: '112233' }).isValid, true);
+  assert.equal(validateStaffUpdates({ name: 'Kasir Baru' }).isValid, true);
+  assert.equal(validateStaffUpdates({ pin: '654321' }).isValid, true);
+
+  // Invalid empty name
+  const emptyName = validateStaffUpdates({ name: '   ' });
+  assert.equal(emptyName.isValid, false);
+  assert.equal(emptyName.message, 'Nama staf tidak boleh kosong.');
+
+  // Invalid PIN (less than 6 digits)
+  const shortPin = validateStaffUpdates({ pin: '1234' });
+  assert.equal(shortPin.isValid, false);
+  assert.equal(shortPin.message, 'Sandi PIN harus terdiri dari tepat 6 angka numerik.');
+
+  // Invalid PIN (non-numeric characters)
+  const alphaPin = validateStaffUpdates({ pin: '12345a' });
+  assert.equal(alphaPin.isValid, false);
 });
 

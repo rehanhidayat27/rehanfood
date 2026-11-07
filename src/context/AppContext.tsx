@@ -20,7 +20,7 @@ import {
   INITIAL_CALENDAR_EVENTS,
 } from '../utils/mockData.ts';
 import { soundEffects } from '../utils/soundEffects.ts';
-import { calculateOrderTotals, checkLowStock } from '../utils/posCalculations.ts';
+import { calculateOrderTotals, checkLowStock, canUserEditStaffRole, validateStaffUpdates } from '../utils/posCalculations.ts';
 import { translations } from '../utils/translations.ts';
 
 interface AppContextType {
@@ -35,6 +35,12 @@ interface AppContextType {
   directSwitchStaffUser: (staffId: string) => void;
   isPinModalOpen: boolean;
   setIsPinModalOpen: (open: boolean) => void;
+  isStaffModalOpen: boolean;
+  setIsStaffModalOpen: (open: boolean) => void;
+  updateStaffUser: (
+    staffId: string,
+    updates: Partial<Pick<StaffUser, 'name' | 'pin' | 'shift' | 'phone' | 'email' | 'avatar'>>
+  ) => { success: boolean; message: string };
   pendingRoleSwitch: UserRole | null;
   setPendingRoleSwitch: (role: UserRole | null) => void;
   pendingStaffUser: StaffUser | null;
@@ -154,7 +160,30 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 
 export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   // Staff & Role
-  const [staffList] = useState<StaffUser[]>(INITIAL_STAFF);
+  const [staffList, setStaffList] = useState<StaffUser[]>(() => {
+    const saved = localStorage.getItem('refood_staff_list');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return INITIAL_STAFF.map(init => {
+            const found = parsed.find((p: StaffUser) => p.id === init.id);
+            if (!found) return init;
+            return {
+              ...init,
+              ...found,
+              // Always guarantee Rehan Hidayat's uploaded photo is preserved
+              avatar: init.id === 'staff-admin' ? init.avatar : found.avatar,
+            };
+          });
+        }
+      } catch (e) {
+        console.error('Failed to parse refood_staff_list:', e);
+      }
+    }
+    return INITIAL_STAFF;
+  });
+
   const [currentStaff, setCurrentStaff] = useState<StaffUser>(() => {
     const savedId = localStorage.getItem('refood_current_staff_id');
     if (savedId) {
@@ -165,6 +194,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     return INITIAL_STAFF.find(s => s.id === 'staff-kasir-pagi') || INITIAL_STAFF[0];
   });
   const [isPinModalOpen, setIsPinModalOpen] = useState(false);
+  const [isStaffModalOpen, setIsStaffModalOpen] = useState(false);
   const [pendingRoleSwitch, setPendingRoleSwitch] = useState<UserRole | null>(null);
   const [pendingStaffUser, setPendingStaffUser] = useState<StaffUser | null>(null);
 
@@ -481,6 +511,80 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
     }
   };
 
+  const updateStaffUser = (
+    staffId: string,
+    updates: Partial<Pick<StaffUser, 'name' | 'pin' | 'shift' | 'phone' | 'email' | 'avatar'>>
+  ): { success: boolean; message: string } => {
+    const target = staffList.find(s => s.id === staffId);
+    if (!target) {
+      return { success: false, message: 'Staf tidak ditemukan.' };
+    }
+
+    // Role-based permission check: Kasir cannot edit anyone!
+    if (!canUserEditStaffRole(currentStaff.role, target.role)) {
+      playSound('alert');
+      const err = currentStaff.role === 'kasir'
+        ? (language === 'en'
+            ? 'Access Denied: Cashiers cannot edit staff accounts or PINs. Only Admin and Manager can make edits!'
+            : 'Akses Ditolak: Kasir tidak memiliki izin untuk mengedit nama atau PIN staf. Hanya Admin dan Manager yang dapat mengedit!')
+        : (language === 'en'
+            ? 'Access Denied: Managers cannot edit Admin accounts!'
+            : 'Akses Ditolak: Manager tidak dapat mengedit akun Admin!');
+      showToast(`⚠️ ${err}`);
+      return { success: false, message: err };
+    }
+
+    // Validate updates
+    const validation = validateStaffUpdates({
+      name: updates.name,
+      pin: updates.pin,
+      shift: updates.shift,
+    });
+    if (!validation.isValid) {
+      playSound('alert');
+      showToast(`⚠️ ${validation.message}`);
+      return { success: false, message: validation.message || 'Data tidak valid' };
+    }
+
+    const updatedList = staffList.map(s => {
+      if (s.id === staffId) {
+        return {
+          ...s,
+          ...updates,
+          name: updates.name !== undefined ? updates.name.trim() : s.name,
+          pin: updates.pin !== undefined ? updates.pin.trim() : s.pin,
+          shift: updates.shift !== undefined ? updates.shift.trim() : s.shift,
+          phone: updates.phone !== undefined ? updates.phone.trim() : s.phone,
+          email: updates.email !== undefined ? updates.email.trim() : s.email,
+        };
+      }
+      return s;
+    });
+
+    setStaffList(updatedList);
+    localStorage.setItem('refood_staff_list', JSON.stringify(updatedList));
+
+    // If target is the active current staff, sync currentStaff immediately!
+    if (currentStaff.id === staffId) {
+      const updatedCurrent = updatedList.find(s => s.id === staffId);
+      if (updatedCurrent) {
+        setCurrentStaff(updatedCurrent);
+      }
+    }
+
+    playSound('pay');
+    showToast(
+      language === 'en'
+        ? `Staff data "${updates.name || target.name}" successfully updated!`
+        : `Data staf "${updates.name || target.name}" berhasil diperbarui!`
+    );
+
+    return {
+      success: true,
+      message: language === 'en' ? 'Staff updated successfully' : 'Data staf berhasil diperbarui',
+    };
+  };
+
   // Cart calculations
   const rawSubtotal = cart.reduce((acc, item) => acc + item.menuItem.price * item.quantity, 0);
   const totals = calculateOrderTotals({
@@ -748,10 +852,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
   const resetToDefaultData = () => {
     setMenuItems(INITIAL_MENU_ITEMS);
     setRawMaterials(INITIAL_RAW_MATERIALS);
+    setStaffList(INITIAL_STAFF);
     localStorage.removeItem('refood_menu_items');
     localStorage.removeItem('refood_raw_materials');
+    localStorage.removeItem('refood_staff_list');
     playSound('pay');
-    showToast('Data menu dan stok berhasil di-reset ke data default pabrik!');
+    showToast('Data menu, stok, dan staf berhasil di-reset ke data default!');
   };
 
   const criticalStockCount = rawMaterials.filter(m => m.currentStock <= m.minThreshold).length;
@@ -806,6 +912,9 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({ children }) => 
         directSwitchStaffUser,
         isPinModalOpen,
         setIsPinModalOpen,
+        isStaffModalOpen,
+        setIsStaffModalOpen,
+        updateStaffUser,
         pendingRoleSwitch,
         setPendingRoleSwitch,
         pendingStaffUser,

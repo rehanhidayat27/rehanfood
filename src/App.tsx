@@ -16,6 +16,7 @@ import { WhatsAppModal } from './components/modals/WhatsAppModal.tsx';
 import { ReceiptModal } from './components/modals/ReceiptModal.tsx';
 import { RecipeModal } from './components/modals/RecipeModal.tsx';
 import { ConfirmDeleteModal } from './components/modals/ConfirmDeleteModal.tsx';
+import { StaffManagementModal } from './components/modals/StaffManagementModal.tsx';
 import { Bell, CheckCircle, X } from 'lucide-react';
 
 const MainLayout: React.FC = () => {
@@ -70,6 +71,7 @@ const MainLayout: React.FC = () => {
       <ReceiptModal />
       <RecipeModal />
       <ConfirmDeleteModal />
+      <StaffManagementModal />
 
       {/* Push Notification Toast */}
       {activeToast && (

@@ -20,6 +20,7 @@ export const Sidebar: React.FC = () => {
     setActiveTab,
     currentStaff,
     setIsPinModalOpen,
+    setIsStaffModalOpen,
     setPendingRoleSwitch,
     setPendingStaffUser,
     playSound,
@@ -90,8 +91,7 @@ export const Sidebar: React.FC = () => {
 
   const handleLockClick = () => {
     playSound('click');
-    setPendingStaffUser(currentStaff);
-    setIsPinModalOpen(true);
+    setIsStaffModalOpen(true);
   };
 
   return (
@@ -177,13 +177,13 @@ export const Sidebar: React.FC = () => {
       <div className="flex flex-col items-center gap-3">
         <button
           onClick={handleLockClick}
-          className="w-11 h-11 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors group relative"
-          title="Kunci / Ganti Akun dengan PIN"
-          aria-label="Kunci atau Ganti Pengguna dengan PIN"
+          className="w-11 h-11 rounded-xl flex items-center justify-center text-slate-400 hover:text-orange-500 hover:bg-orange-50 dark:hover:bg-slate-800 transition-colors group relative cursor-pointer"
+          title="Kelola & Edit Nama Kasir / Staf (Admin & Manager)"
+          aria-label="Kelola & Edit Nama Kasir"
         >
           <Lock className="w-5 h-5 group-hover:scale-110 transition-transform" />
-          <div className="absolute left-full ml-3 px-2 py-1 bg-slate-900 text-white text-xs rounded shadow-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
-            Ganti PIN / Kunci ({currentStaff.role.toUpperCase()})
+          <div className="absolute left-full ml-3 px-2.5 py-1.5 bg-slate-900 text-white text-xs rounded-md shadow-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-50">
+            Kelola & Edit Nama Kasir ({currentStaff.role.toUpperCase()})
           </div>
         </button>
       </div>

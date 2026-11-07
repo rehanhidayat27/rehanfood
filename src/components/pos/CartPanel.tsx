@@ -116,7 +116,7 @@ export const CartPanel: React.FC<{ onCloseMobile?: () => void }> = ({ onCloseMob
             <div className="relative z-10 space-y-4">
               <div className="flex items-center justify-between">
                 <span className="text-[11px] font-semibold tracking-wider text-white/90">
-                  REFOOD MERCHANT WALLET
+                  REHAN FOOD MERCHANT WALLET
                 </span>
                 <CreditCard className="w-5 h-5 text-white/80" />
               </div>

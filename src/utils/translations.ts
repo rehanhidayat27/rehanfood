@@ -54,7 +54,7 @@ export const translations = {
     calories: 'kkal',
 
     // Cart Panel
-    balanceTitle: 'Saldo Kasir POS',
+    balanceTitle: 'Saldo Kasir',
     shiftTotal: 'Total Omset Shift Ini',
     locationTitle: 'Lokasi Meja / Pemesan',
     changeLocation: 'Ganti Meja',
@@ -242,7 +242,7 @@ export const translations = {
     calories: 'kcal',
 
     // Cart Panel
-    balanceTitle: 'Cashier POS Balance',
+    balanceTitle: 'Cashier Balance',
     shiftTotal: 'Current Shift Total Revenue',
     locationTitle: 'Dining Location / Table',
     changeLocation: 'Change Table',

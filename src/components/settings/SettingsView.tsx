@@ -35,6 +35,7 @@ export const SettingsView: React.FC = () => {
     staffList,
     currentStaff,
     setIsPinModalOpen,
+    setIsStaffModalOpen,
     setPendingRoleSwitch,
     setPendingStaffUser,
     resetToDefaultData,
@@ -52,7 +53,7 @@ export const SettingsView: React.FC = () => {
   ];
 
   return (
-    <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 space-y-6 custom-scrollbar pb-24 lg:pb-8">
+    <div className="flex-1 overflow-y-auto px-3 sm:px-6 md:px-8 py-4 sm:py-6 space-y-6 custom-scrollbar pb-24 lg:pb-8 min-w-0">
       {/* Header */}
       <div>
         <span className="text-xs font-bold text-orange-600 dark:text-orange-400 uppercase tracking-wider">
@@ -175,10 +176,10 @@ export const SettingsView: React.FC = () => {
             </div>
 
             {/* Language Selector */}
-            <div className="flex items-center justify-between p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700">
-              <div className="space-y-0.5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 gap-2.5 sm:gap-4">
+              <div className="space-y-0.5 min-w-0">
                 <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
-                  <Globe className="w-4 h-4 text-blue-500" />
+                  <Globe className="w-4 h-4 text-blue-500 shrink-0" />
                   <span>Bahasa Sistem (Language)</span>
                 </div>
                 <div className="text-[11px] text-slate-400">
@@ -191,10 +192,10 @@ export const SettingsView: React.FC = () => {
                   setLanguage(e.target.value as AppLanguage);
                   playSound('click');
                 }}
-                className="text-xs p-1.5 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 font-semibold"
+                className="w-full sm:w-auto text-xs py-2 px-3 rounded-xl border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-800 dark:text-slate-100 font-semibold shrink-0 cursor-pointer shadow-sm"
               >
-                <option value="id">🇮🇩 Bahasa Indonesia</option>
-                <option value="en">🇬🇧 English (US)</option>
+                <option value="id">ID Bahasa Indonesia</option>
+                <option value="en">EN English (US)</option>
               </select>
             </div>
           </div>
@@ -269,14 +270,25 @@ export const SettingsView: React.FC = () => {
 
         {/* 4. Multi-User Access & PIN Management */}
         <div className="p-6 rounded-3xl bg-white dark:bg-slate-850 border border-slate-200 dark:border-slate-700 shadow-sm space-y-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div className="flex items-center gap-2">
-              <Users className="w-5 h-5 text-purple-500" />
+              <Users className="w-5 h-5 text-purple-500 shrink-0" />
               <h3 className="font-extrabold text-sm md:text-base text-slate-900 dark:text-white">
                 Hak Akses Multi-Pengguna (RBAC)
               </h3>
             </div>
-            <span className="text-[10px] text-slate-400">PIN 6-Digit Aman</span>
+            <button
+              type="button"
+              onClick={() => {
+                playSound('click');
+                setIsStaffModalOpen(true);
+              }}
+              className="self-start sm:self-auto px-3 py-1.5 text-xs font-bold rounded-xl bg-orange-50 dark:bg-orange-950/40 text-orange-600 dark:text-orange-400 hover:bg-orange-100 dark:hover:bg-orange-900/40 border border-orange-200 dark:border-orange-800 transition-colors flex items-center gap-1.5 cursor-pointer"
+              title="Admin & Manager dapat mengedit nama dan PIN staf kasir"
+            >
+              <Lock className="w-3.5 h-3.5" />
+              <span>Kelola & Edit Nama Kasir</span>
+            </button>
           </div>
 
           <div className="space-y-2.5">
@@ -285,44 +297,55 @@ export const SettingsView: React.FC = () => {
               return (
                 <div
                   key={staff.id}
-                  className={`p-3 rounded-2xl border flex items-center justify-between transition-colors ${
+                  className={`p-3.5 rounded-2xl border flex flex-col sm:flex-row sm:items-center justify-between gap-3 transition-colors ${
                     isCurrent
                       ? 'border-orange-500 bg-orange-50/50 dark:bg-orange-950/30'
                       : 'border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
                     <img
                       src={staff.avatar}
                       alt={staff.name}
-                      className="w-10 h-10 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-700"
+                      className="w-11 h-11 rounded-full object-cover ring-2 ring-slate-200 dark:ring-slate-700 shrink-0"
                     />
-                    <div>
-                      <div className="font-bold text-xs text-slate-900 dark:text-white flex items-center gap-1.5">
-                        <span>{staff.name}</span>
-                        {isCurrent && (
-                          <span className="text-[9px] px-1.5 py-0.2 rounded bg-orange-500 text-white font-bold">
+                    <div className="min-w-0 flex-1">
+                      <div className="font-bold text-xs sm:text-sm text-slate-900 dark:text-white flex items-center gap-2 flex-wrap">
+                        <span className="truncate">{staff.name}</span>
+                        {isCurrent ? (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-orange-500 text-white font-bold shrink-0">
                             Sedang Aktif
+                          </span>
+                        ) : (
+                          <span className="text-[10px] px-2 py-0.5 rounded-full bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold shrink-0 uppercase">
+                            {staff.role}
                           </span>
                         )}
                       </div>
-                      <div className="text-[11px] text-slate-400 font-semibold">
-                        Posisi: <span className="text-slate-700 dark:text-slate-200">{staff.shift || staff.role}</span> • Sandi PIN: <span className="font-mono font-bold text-orange-600 dark:text-orange-400">{staff.pin}</span>
+                      <div className="text-[11px] text-slate-400 font-medium mt-0.5">
+                        Posisi: <span className="text-slate-700 dark:text-slate-200 font-semibold">{staff.shift || staff.role}</span>
+                        <span className="mx-1.5">•</span>
+                        Sandi PIN: <span className="font-mono font-bold text-orange-600 dark:text-orange-400">{staff.pin}</span>
                       </div>
                     </div>
                   </div>
 
-                  {!isCurrent && (
+                  {!isCurrent ? (
                     <button
+                      type="button"
                       onClick={() => {
                         setPendingStaffUser(staff);
                         setPendingRoleSwitch(staff.role);
                         setIsPinModalOpen(true);
                       }}
-                      className="px-3 py-1.5 text-xs font-bold rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 flex items-center gap-1 cursor-pointer"
+                      className="w-full sm:w-auto px-3.5 py-2 text-xs font-bold rounded-xl border border-slate-300 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 flex items-center justify-center gap-1.5 cursor-pointer shrink-0 transition-colors active:scale-95 whitespace-nowrap self-stretch sm:self-auto"
                     >
-                      <Lock className="w-3 h-3" /> Ganti ke Akun Ini
+                      <Lock className="w-3.5 h-3.5" /> Ganti ke Akun Ini
                     </button>
+                  ) : (
+                    <span className="hidden sm:inline-flex text-[11px] font-bold text-orange-600 dark:text-orange-400 items-center gap-1 shrink-0">
+                      ● Aktif Sekarang
+                    </span>
                   )}
                 </div>
               );
